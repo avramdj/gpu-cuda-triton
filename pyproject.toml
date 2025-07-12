@@ -1,0 +1,15 @@
+[project]
+name = "gpu-cuda-triton"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "matplotlib>=3.10.3",
+    "numpy>=2.3.1",
+    "pandas>=2.3.1",
+    "polars>=1.31.0",
+    "pytest>=8.4.1",
+    "torch>=2.7.1",
+    "triton>=3.3.1",
+]
