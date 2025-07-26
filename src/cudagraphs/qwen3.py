@@ -10,12 +10,15 @@ PROFILE = os.getenv("PROFILE", "0") == "1"
 
 BATCH_SIZE = 1024
 MAX_PROMPT_LENGTH = 32
-MAX_TOKENS = 110  # 6998 tok/s RTX 4090
+MAX_TOKENS = 64  # 16777.14 tok/s RTX 4090
 N_INFERENCE_STEPS = MAX_TOKENS - MAX_PROMPT_LENGTH
 
 model_name = "Qwen/Qwen3-0.6B"
 model = AutoModelForCausalLM.from_pretrained(
     model_name, torch_dtype=torch.float16, device_map="cuda"
+)
+model = torch.compile(
+    model, mode="max-autotune-no-cudagraphs", dynamic=False, fullgraph=False
 )
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
@@ -62,7 +65,7 @@ def run_model(model):
         max_batch_size=BATCH_SIZE,
         max_cache_len=MAX_TOKENS,
         device=model.device,
-        dtype=torch.bfloat16,
+        dtype=torch.float16,
     )
 
     static_input_ids = torch.zeros(BATCH_SIZE, 1, dtype=torch.long, device=model.device)
@@ -76,14 +79,15 @@ def run_model(model):
     static_cache_position.fill_(seq_len)
 
     # warmup boy
-    forward(
-        model=model,
-        input_ids=static_input_ids,
-        position_ids=static_position_ids,
-        past_key_values=past_key_values,
-        cache_position=static_cache_position,
-        use_cache=True,
-    )
+    for _ in range(3):
+        forward(
+            model=model,
+            input_ids=static_input_ids,
+            position_ids=static_position_ids,
+            past_key_values=past_key_values,
+            cache_position=static_cache_position,
+            use_cache=True,
+        )
     torch.cuda.synchronize()
 
     cudagraph = torch.cuda.CUDAGraph()
@@ -132,7 +136,7 @@ def run_model(model):
         torch.cuda.synchronize()
         time_per_iter = (time.time() - t0) / N_INFERENCE_STEPS
 
-        print(f"\nTokens/sec: {1 / time_per_iter * BATCH_SIZE}")
+        print(f"\nTokens/sec: {1 / time_per_iter * BATCH_SIZE:.2f}")
         # print(tokenizer.decode(sentence))
 
     if PROFILE:
