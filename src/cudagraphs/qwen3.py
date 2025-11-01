@@ -6,11 +6,13 @@ from tqdm import tqdm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.cache_utils import StaticCache
 
+torch.backends.cudnn.fp32_precision = "tf32"
+
 PROFILE = os.getenv("PROFILE", "0") == "1"
 
 BATCH_SIZE = 1024
 MAX_PROMPT_LENGTH = 32
-MAX_TOKENS = 64  # 16777.14 tok/s RTX 4090
+MAX_TOKENS = 64  # 17026.65 tok/s RTX 4090 + torch 2.9.0
 N_INFERENCE_STEPS = MAX_TOKENS - MAX_PROMPT_LENGTH
 
 model_name = "Qwen/Qwen3-0.6B"
