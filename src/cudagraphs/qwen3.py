@@ -122,7 +122,7 @@ def run_model(model):
         torch.cuda.synchronize()
         t0 = time.time()
 
-        # sentence = prompt_tokens[0].tolist()
+        sentence = prompt_tokens[0].tolist()
         seq_len = past_key_values.get_seq_length()
 
         static_position_ids.fill_(seq_len - 1)
@@ -133,13 +133,13 @@ def run_model(model):
             static_position_ids.add_(1)
             static_cache_position.add_(1)
             cudagraph.replay()
-            # sentence.append(next_token.item())
+            sentence.extend(next_token.tolist()[0])
 
         torch.cuda.synchronize()
         time_per_iter = (time.time() - t0) / N_INFERENCE_STEPS
 
         print(f"\nTokens/sec: {1 / time_per_iter * BATCH_SIZE:.2f}")
-        # print(tokenizer.decode(sentence))
+        print(tokenizer.decode(sentence))
 
     if PROFILE:
         with torch.profiler.profile(

@@ -199,6 +199,15 @@ wheels = [
 ]
 
 [[package]]
+name = "einops"
+version = "0.8.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e5/81/df4fbe24dff8ba3934af99044188e20a98ed441ad17a274539b74e82e126/einops-0.8.1.tar.gz", hash = "sha256:de5d960a7a761225532e0f1959e5315ebeafc0cd43394732f103ca44b9837e84", size = 54805, upload-time = "2025-02-09T03:17:00.434Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/87/62/9773de14fe6c45c23649e98b83231fffd7b9892b6cf863251dc2afa73643/einops-0.8.1-py3-none-any.whl", hash = "sha256:919387eb55330f5757c6bea9165c5ff5cfe63a642682ea788a6d472576d81737", size = 64359, upload-time = "2025-02-09T03:17:01.998Z" },
+]
+
+[[package]]
 name = "executing"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -208,12 +217,50 @@ wheels = [
 ]
 
 [[package]]
+name = "fastcore"
+version = "1.8.14"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/41/fc/4782041a7e96ae3de2b6bc7a287693d619688d938f43e6d9e70a23874d51/fastcore-1.8.14.tar.gz", hash = "sha256:869735ef493dbc7e5e8cbfc35fa3310772ce4c768d5b3a82d6a0d571148401be", size = 83648, upload-time = "2025-10-29T05:38:46.285Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ed/c6/236247deaa155fad1b38b6deb95b8b76efd20f5107b4577eee42002cbf11/fastcore-1.8.14-py3-none-any.whl", hash = "sha256:a02a749c26243ffd54d6dd11165cf4a556c7cb08f4c7e47ff67b32c7b0183ce9", size = 86791, upload-time = "2025-10-29T05:38:44.343Z" },
+]
+
+[[package]]
 name = "filelock"
 version = "3.18.0"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/0a/10/c23352565a6544bdc5353e0b15fc1c563352101f30e24bf500207a54df9a/filelock-3.18.0.tar.gz", hash = "sha256:adbc88eabb99d2fec8c9c1b229b171f18afa655400173ddc653d5d01501fb9f2", size = 18075, upload-time = "2025-03-14T07:11:40.47Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/4d/36/2a115987e2d8c300a974597416d9de88f2444426de9571f4b59b2cca3acc/filelock-3.18.0-py3-none-any.whl", hash = "sha256:c401f4f8377c4464e6db25fff06205fd89bdd83b65eb0488ed1b160f780e21de", size = 16215, upload-time = "2025-03-14T07:11:39.145Z" },
+]
+
+[[package]]
+name = "fla-core"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "einops" },
+    { name = "torch" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/db/3d/79a9d5c8cd973c86f35403931031787dfc6cc97d838a42d4c62e8cbbb66f/fla_core-0.4.0.tar.gz", hash = "sha256:d975022b074e97bfd086dc6b767dccb35e27a9fe36f26f3b26b1c2b68b36a1c8", size = 316316, upload-time = "2025-10-27T08:18:51.673Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d5/0c/d52ab65e9c163631895052d70d4111f8530ca52f45beb0895378d1a2a8b5/fla_core-0.4.0-py3-none-any.whl", hash = "sha256:5396f36a9838c99f9e45c70e88e2e0b26688f719d07d2ddd61be16d29327f4ea", size = 438519, upload-time = "2025-10-27T08:18:49.561Z" },
+]
+
+[[package]]
+name = "flash-linear-attention"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fla-core" },
+    { name = "transformers" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/44/9a/e546815da2bf149e0af58449ff1ca10074165af4384febead438ad46f74c/flash_linear_attention-0.4.0.tar.gz", hash = "sha256:c5d2bf6e1a766af3a4426f07f710b0b87809f7218de21eb313314be6ff1b0dba", size = 157646, upload-time = "2025-10-27T08:18:52.445Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3c/76/4f716c953608204c970de7cd4045db1af02643d7f19c94a49254834b7563/flash_linear_attention-0.4.0-py3-none-any.whl", hash = "sha256:50c97163f7cb64dc53585194ef36af44d2a6bc545227c4f73bb3ba9062630f1a", size = 290439, upload-time = "2025-10-27T08:18:50.589Z" },
 ]
 
 [[package]]
@@ -248,7 +295,9 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "accelerate" },
+    { name = "flash-linear-attention" },
     { name = "ipykernel" },
+    { name = "lovely-tensors" },
     { name = "matplotlib" },
     { name = "numpy" },
     { name = "pandas" },
@@ -263,7 +312,9 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "accelerate", specifier = ">=1.9.0" },
+    { name = "flash-linear-attention", specifier = ">=0.4.0" },
     { name = "ipykernel", specifier = ">=7.1.0" },
+    { name = "lovely-tensors", specifier = ">=0.1.19" },
     { name = "matplotlib", specifier = ">=3.10.3" },
     { name = "numpy", specifier = ">=2.3.1" },
     { name = "pandas", specifier = ">=2.3.1" },
@@ -471,6 +522,34 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/05/f9/27e94c1b3eb29e6933b6986ffc5fa1177d2cd1f0c8efc5f02c91c9ac61de/kiwisolver-1.4.8-cp313-cp313t-musllinux_1_2_ppc64le.whl", hash = "sha256:151dffc4865e5fe6dafce5480fab84f950d14566c480c08a53c663a0020504b6", size = 2390661, upload-time = "2024-12-24T18:30:34.939Z" },
     { url = "https://files.pythonhosted.org/packages/d9/d4/3c9735faa36ac591a4afcc2980d2691000506050b7a7e80bcfe44048daa7/kiwisolver-1.4.8-cp313-cp313t-musllinux_1_2_s390x.whl", hash = "sha256:577facaa411c10421314598b50413aa1ebcf5126f704f1e5d72d7e4e9f020d90", size = 2546710, upload-time = "2024-12-24T18:30:37.281Z" },
     { url = "https://files.pythonhosted.org/packages/4c/fa/be89a49c640930180657482a74970cdcf6f7072c8d2471e1babe17a222dc/kiwisolver-1.4.8-cp313-cp313t-musllinux_1_2_x86_64.whl", hash = "sha256:be4816dc51c8a471749d664161b434912eee82f2ea66bd7628bd14583a833e85", size = 2349213, upload-time = "2024-12-24T18:30:40.019Z" },
+]
+
+[[package]]
+name = "lovely-numpy"
+version = "0.2.17"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fastcore" },
+    { name = "matplotlib" },
+    { name = "numpy" },
+    { name = "packaging" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2c/5c/e422f913b5722bc0e697342cf16e7b39fe04ebf694e1334034ef913bbb59/lovely_numpy-0.2.17.tar.gz", hash = "sha256:c414db415701f060c0875cd1d8013a7167664f95e85d11644fdff646941abdb0", size = 24396, upload-time = "2025-10-23T08:16:36.334Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ee/87/cd2c462355886debdd8ef2064e7de10fcb5eea2928c5c7a1d3566d36cc2d/lovely_numpy-0.2.17-py3-none-any.whl", hash = "sha256:17e1b817d10ce28ce7f4d943f87d4ae7c033250b03c24284af436c200b51f1ac", size = 24424, upload-time = "2025-10-23T08:16:35.024Z" },
+]
+
+[[package]]
+name = "lovely-tensors"
+version = "0.1.19"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "lovely-numpy" },
+    { name = "torch" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/f8/c2/8c21ea15038a2e98079285c52a180e53ea7f0aadcf5b1fa58c1cadfb68da/lovely_tensors-0.1.19.tar.gz", hash = "sha256:0a9cec41c6a13d7de3ca3688c10f61991071352116c5303c3e62c91febf32016", size = 22558, upload-time = "2025-10-04T15:56:33.085Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a0/ae/93fd971b7a067ddca543302e7632509a36078b48ad0d08643bc17ac35cf3/lovely_tensors-0.1.19-py3-none-any.whl", hash = "sha256:b0fee4f5cfbb0494be6bbce0963bf8e39edc1e4ef89afe922c30edfb55d65237", size = 19394, upload-time = "2025-10-04T15:56:31.682Z" },
 ]
 
 [[package]]
