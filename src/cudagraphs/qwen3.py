@@ -7,6 +7,11 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers.cache_utils import StaticCache
 
 torch.backends.cudnn.fp32_precision = "tf32"
+torch.backends.cuda.matmul.fp32_precision = "tf32"
+torch.backends.cudnn.conv.fp32_precision = "tf32"
+
+torch.backends.cuda.matmul.allow_tf32 = True
+torch.backends.cudnn.allow_tf32 = True
 
 PROFILE = os.getenv("PROFILE", "0") == "1"
 
@@ -14,6 +19,7 @@ BATCH_SIZE = 1024
 MAX_PROMPT_LENGTH = 32
 MAX_TOKENS = 64  # 17026.65 tok/s RTX 4090 + torch 2.9.0
 N_INFERENCE_STEPS = MAX_TOKENS - MAX_PROMPT_LENGTH
+PROMPT = "Hello, this is a prefill"
 
 model_name = "Qwen/Qwen3-0.6B"
 model = AutoModelForCausalLM.from_pretrained(
@@ -33,12 +39,17 @@ print(f"Device: {model.device}")
 print(f"Model size: {sum(p.numel() for p in model.parameters()) / 1e6:.2f}M")
 
 
+def multinomial_sample_one_no_sync(probs_sort):
+    q = torch.empty_like(probs_sort).exponential_(1)
+    return torch.argmax(probs_sort / q, dim=-1, keepdim=True).to(dtype=torch.int)
+
+
 def sample(logits, temperature=0.7, top_k=50):
     logits_fp32 = logits.float()
     scaled_logits = logits_fp32[:, -1, :] / temperature
     top_k_logits, top_k_indices = torch.topk(scaled_logits, k=top_k, dim=-1)
     top_k_probs = torch.softmax(top_k_logits, dim=-1)
-    sampled_indices = torch.multinomial(top_k_probs, num_samples=1)
+    sampled_indices = multinomial_sample_one_no_sync(top_k_probs)
     next_token = torch.gather(top_k_indices, -1, sampled_indices)
     return next_token
 
@@ -80,6 +91,17 @@ def run_model(model):
     static_position_ids.fill_(seq_len)
     static_cache_position.fill_(seq_len)
 
+    # prewarmup
+    forward(
+        model=model,
+        input_ids=static_input_ids,
+        position_ids=static_position_ids,
+        past_key_values=past_key_values,
+        cache_position=static_cache_position,
+        use_cache=True,
+    )
+    torch.cuda.synchronize()
+
     # warmup boy
     for _ in range(3):
         forward(
@@ -104,7 +126,7 @@ def run_model(model):
         )
 
     def f():
-        prompt = "Hello, this is a prefill"
+        prompt = PROMPT
 
         prompt_tokens = tokenizer(prompt, return_tensors="pt").input_ids.to(
             model.device
@@ -129,11 +151,13 @@ def run_model(model):
         static_cache_position.fill_(seq_len - 1)
 
         for _ in tqdm(range(N_INFERENCE_STEPS), disable=True):
+            sentence.extend(next_token.tolist()[0])
             static_input_ids.copy_(next_token)
             static_position_ids.add_(1)
             static_cache_position.add_(1)
             cudagraph.replay()
-            sentence.extend(next_token.tolist()[0])
+
+        sentence.extend(next_token.tolist()[0])
 
         torch.cuda.synchronize()
         time_per_iter = (time.time() - t0) / N_INFERENCE_STEPS
