@@ -1,7 +1,7 @@
 import torch
 import triton
 import triton.language as tl
-from utils import get_bench, get_device
+from utils import get_device
 
 DEVICE = get_device()
 
