@@ -1,3 +1,4 @@
+src/cudagraphs/data
 results/
 # Python-generated files
 __pycache__/
