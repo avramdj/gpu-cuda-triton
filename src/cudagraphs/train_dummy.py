@@ -131,11 +131,15 @@ def main():
 
     torch.cuda.synchronize()
 
-    total_steps = 400
+    total_steps = 70
 
     prof = profile(
         activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-        schedule=schedule(wait=200, active=4),
+        schedule=schedule(
+            warmup=5,
+            wait=50,
+            active=15,
+        ),
         record_shapes=True,
         profile_memory=True,
         with_stack=True,
